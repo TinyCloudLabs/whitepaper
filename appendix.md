@@ -210,6 +210,16 @@ ability-pattern    = ability-namespace "/" ("*" / ability-action)
 ;;   tinycloud.kv/list      - List keys
 ;;   tinycloud.kv/metadata  - Read metadata
 ;;   tinycloud.hosts/host   - Host capability
+;;
+;; SQL Database abilities:
+;;   tinycloud.sql/read     - Full read access (any SELECT)
+;;   tinycloud.sql/write    - Full write access (INSERT, UPDATE, DELETE)
+;;   tinycloud.sql/admin    - Schema changes (CREATE, ALTER, DROP)
+;;   tinycloud.sql/select   - SELECT with table/column caveats
+;;   tinycloud.sql/insert   - INSERT with table caveats
+;;   tinycloud.sql/update   - UPDATE with table/column caveats
+;;   tinycloud.sql/delete   - DELETE with table caveats
+;;   tinycloud.sql/execute  - Execute specific prepared statements
 
 ;; ------------------------------------------------------------
 ;; Path (Key-Value Store Path)
@@ -489,7 +499,66 @@ type Version struct {
 } representation map
 ```
 
-### C.6 Serialization Formats
+### C.6 SQL Operations
+
+```ipldsch
+## ============================================================
+## SQL Database Operations
+## ============================================================
+
+## A SQL query invocation
+type SqlQuery struct {
+    ## TinyCloud namespace
+    orbit ResourceURI
+
+    ## Database path (e.g., "myapp.db")
+    database Path
+
+    ## SQL statement to execute
+    statement String
+
+    ## Query parameters (for prepared statements)
+    parameters [Any]
+
+    ## Version of the database being queried
+    version Version
+} representation map
+
+## Result of a SQL query
+type SqlResult struct {
+    ## TinyCloud namespace
+    orbit ResourceURI
+
+    ## Database path
+    database Path
+
+    ## Column names in result set
+    columns [String]
+
+    ## Row data (array of arrays)
+    rows [[Any]]
+
+    ## Number of rows affected (for INSERT/UPDATE/DELETE)
+    rowsAffected optional Int
+} representation map
+
+## SQL capability caveats for table-level access
+type SqlTableCaveat struct {
+    ## Tables this capability applies to
+    tables [String]
+
+    ## Columns accessible (if omitted, all columns)
+    columns optional [String]
+} representation map
+
+## SQL capability caveats for query-level access
+type SqlQueryCaveat struct {
+    ## Allowed prepared statements (exact match)
+    statements [String]
+} representation map
+```
+
+### C.7 Serialization Formats
 
 TinyCloud nodes serialize DAG nodes using DAG-CBOR (Concise Binary Object Representation) [10], which provides:
 
@@ -504,6 +573,8 @@ TinyCloud nodes serialize DAG nodes using DAG-CBOR (Concise Binary Object Repres
 | Invocation | raw | 0x55 |
 | Revocation | raw | 0x55 |
 | KvWrite | dag-cbor | 0x71 |
+| SqlQuery | dag-cbor | 0x71 |
+| SqlResult | dag-cbor | 0x71 |
 | Content | raw | 0x55 |
 
 Raw events (delegations, invocations, revocations) are stored as their original serialized bytes (JWT or CACAO format) to preserve signature validity.
@@ -685,6 +756,11 @@ The `resources` array contains a base64-encoded ReCaps object specifying the del
 tinycloud:pkh:eip155:1:0x6a12c8594c5C850d57612CA58810ABb8aeBbC04B:default/kv/photos/vacation.jpg
 ```
 
+**SQL Database Resource:**
+```
+tinycloud:pkh:eip155:1:0x6a12c8594c5C850d57612CA58810ABb8aeBbC04B:default/sql/myapp.db
+```
+
 **Capabilities Resource:**
 ```
 tinycloud:pkh:eip155:1:0x6a12c8594c5C850d57612CA58810ABb8aeBbC04B:default/capabilities/all
@@ -719,8 +795,13 @@ tinycloud:key:z6MkiTBz1ymuepAQ4HEHYSF1H8quG5GLVVQR3djdX3mDooWp:default/hosts/*
 | **Revocation** | An authorization event that invalidates a delegation |
 | **Session Key** | An ephemeral key pair delegated capabilities for a specific session or device |
 | **SIWE** | Sign-In with Ethereum—a standard for authenticating with Ethereum accounts (EIP-4361) |
+| **SQL Service** | TinyCloud service providing SQLite database storage with capability-based access control |
+| **SQLite** | A lightweight, embedded relational database stored as a single file |
+| **Table Caveat** | A capability restriction limiting SQL access to specific tables and columns |
+| **Query Caveat** | A capability restriction limiting SQL access to specific prepared statements |
 | **ReCaps** | SIWE capability extensions enabling UCAN-like semantics (EIP-5573) |
 | **UCAN** | User-Controlled Authorization Network—the capability delegation scheme used by TinyCloud |
+| **ZK VM** | Zero-Knowledge Virtual Machine—enables verifiable computation with cryptographic proofs |
 
 ---
 
@@ -757,6 +838,14 @@ tinycloud:key:z6MkiTBz1ymuepAQ4HEHYSF1H8quG5GLVVQR3djdX3mDooWp:default/hosts/*
 [15] ChainAgnostic, "CAIP-2: Blockchain ID Specification," Chain Agnostic Improvement Proposals. [Online]. Available: https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md
 
 [16] ChainAgnostic, "CAIP-122: Sign-in with X (SIWx)," Chain Agnostic Improvement Proposals. [Online]. Available: https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-122.md
+
+[17] SQLite Consortium, "SQLite WebAssembly," SQLite Documentation. [Online]. Available: https://sqlite.org/wasm
+
+[18] RISC Zero, "RISC Zero: Zero-Knowledge Verifiable General Computing," GitHub, 2025. [Online]. Available: https://github.com/risc0/risc0
+
+[19] Succinct Labs, "SP1: RISC-V zkVM," 2025. [Online]. Available: https://github.com/succinctlabs/sp1
+
+[20] PowerSync, "The Current State of SQLite Persistence on the Web," PowerSync Blog, November 2025. [Online]. Available: https://www.powersync.com/blog/sqlite-persistence-on-the-web
 
 ---
 

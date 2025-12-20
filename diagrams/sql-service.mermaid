@@ -1,0 +1,37 @@
+%% SQL Service Query Flow
+%% Use: Technical Appendix D
+
+sequenceDiagram
+    participant Client
+    participant Node as TinyCloud Node
+    participant Auth as Auth Validator
+    participant SQLite as SQLite Engine
+    participant Storage
+
+    Client->>Node: POST /sql/myapp.db/query<br/>Headers: Authorization<br/>Body: {statement, parameters}
+
+    Node->>Auth: Validate authorization<br/>(token, database, statement)
+
+    Note over Auth: 1. Parse CACAO/UCAN<br/>2. Check sql/* capability<br/>3. Validate table caveats<br/>4. Check prepared statements
+
+    alt Authorization VALID
+        Auth-->>Node: Valid (invoker, capabilities)
+
+        Node->>Storage: Load SQLite database file
+
+        Storage-->>Node: Database bytes
+
+        Node->>SQLite: Execute query<br/>(statement, parameters)
+
+        SQLite-->>Node: Result rows
+
+        Note over Node: Create SqlQuery event<br/>Create Epoch
+
+        Node->>Storage: Update database file<br/>(if write operation)
+
+        Node-->>Client: 200 OK<br/>{columns, rows, rowsAffected}
+
+    else Authorization INVALID
+        Auth-->>Node: Invalid (reason)
+        Node-->>Client: 403 Forbidden<br/>{error: reason}
+    end

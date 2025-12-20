@@ -1,6 +1,6 @@
 # TinyCloud Protocol: A Self-Sovereign Autonomic Namespace for Decentralized Data Control
 
-**Version 2.0**
+**Version 1.0**
 
 **Authors:** Charles Cunningham, Sam Gbafa
 
@@ -146,6 +146,32 @@ Threshold decryption and proxy re-encryption for data sharing:
 
 Data is encrypted client-side before storage. TinyCloud nodes participate in threshold decryption—no single node can decrypt unilaterally. Proxy re-encryption enables sharing without exposing plaintext to intermediaries.
 
+### SQL Database (`sql`)
+
+Relational database storage using SQLite:
+
+| Ability | Description |
+|---------|-------------|
+| `tinycloud.sql/read` | Full read access (any SELECT) |
+| `tinycloud.sql/write` | Full write access (INSERT, UPDATE, DELETE) |
+| `tinycloud.sql/admin` | Schema changes (CREATE, ALTER, DROP) |
+| `tinycloud.sql/select` | SELECT with table/column restrictions |
+| `tinycloud.sql/execute` | Execute specific prepared statements |
+
+SQLite databases are stored as files within the namespace at `sql/<database-name>`. Permissions can be scoped hierarchically:
+
+- **Database level**: Full read/write/admin access to the entire database
+- **Table level**: Access to specific tables and columns via caveats
+- **Query level**: Execute only specific prepared statements
+
+```
+tinycloud:pkh:eip155:1:0x6a12...C04B:default/sql/myapp.db
+└────────────────────────────────────────────┘└──┘└────────┘
+              namespace                       service  database
+```
+
+This enables applications to use SQL for relational data while maintaining TinyCloud's capability-based authorization. Applications can choose KV for blob storage or SQL for structured queries—both with the same authorization model.
+
 ### Service Extensibility
 
 New services follow the pattern `tinycloud.<service>/<action>`. This extensibility allows the protocol to grow while maintaining consistent authorization semantics.
@@ -188,7 +214,23 @@ When events occur, hosts broadcast epochs to peers. Peers validate the epoch cha
 
 ### Verifiable Compute with ZK VMs
 
-Zero-knowledge virtual machines (RISC-V based) can provide cryptographic proofs that computations executed correctly. This enables trustless verification: given a TinyCloud state hash and a computation result, anyone can verify correctness without re-executing.
+Zero-knowledge virtual machines (RISC Zero, SP1) enable cryptographic proofs that computations executed correctly. For TinyCloud, this means:
+
+1. **Verifiable Functions**: Execute WASM or native code in a ZK VM, producing a proof alongside the result
+2. **Trustless Verification**: Anyone can verify `verify(proof, function_cid, inputs, outputs) → bool` without re-executing
+3. **Computation Delegation**: Delegate compute capability to untrusted nodes that must provide proofs
+
+Current ZK VMs achieve near-real-time proving for complex workloads—Ethereum blocks can be proven in under a minute with systems like R0VM 2.0 and SP1 Hypercube. This makes verifiable compute practical for TinyCloud applications requiring auditability or cross-party trust.
+
+### Verifiable Authorization
+
+ZK proofs can extend beyond compute to authorization itself:
+
+- **Delegation Validation Proof**: Prove that a delegation was correctly validated against namespace policy
+- **Epoch Transition Proof**: Prove that epoch N+1 correctly follows from epoch N
+- **State Root Proof**: Prove current state root derives from genesis through valid transitions
+
+This enables light clients to verify TinyCloud state with a single proof instead of replaying the full DAG.
 
 ### On-Chain State Anchoring
 
