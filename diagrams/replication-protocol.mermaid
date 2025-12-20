@@ -1,0 +1,37 @@
+%% Detailed Peer-to-Peer Replication Protocol
+%% Use: Technical Appendix D
+
+sequenceDiagram
+    participant Client
+    participant HostA as Host A
+    participant HostB as Host B
+    participant HostC as Host C
+
+    Note over Client,HostC: Client writes to Host A
+
+    Client->>HostA: PUT /kv/data.json<br/>+ Authorization Header
+
+    Note over HostA: 1. Validate authorization chain<br/>2. Stage value (compute hash)<br/>3. Create KvWrite node<br/>4. Create Epoch
+
+    HostA->>HostA: Store to local DB
+
+    par Broadcast to peers
+        HostA->>HostB: Broadcast Epoch
+        HostA->>HostC: Broadcast Epoch
+    end
+
+    HostA-->>Client: 200 OK + Version
+
+    Note over HostB: Check: parents known?
+
+    alt Parents KNOWN
+        Note over HostB: Validate & Apply locally
+    else Parents UNKNOWN
+        HostB->>HostA: Request missing epochs
+        HostA->>HostB: Send epoch chain
+        Note over HostB: Validate chain bottom-up<br/>Apply events in order
+    end
+
+    Note over HostC: Same process as Host B
+
+    Note over HostA,HostC: All hosts now have consistent state

@@ -1,0 +1,35 @@
+%% Delegation Chain Structure
+%% Use: Main whitepaper - Authorization Model section
+
+flowchart LR
+    subgraph root["Root Authority"]
+        RootDID["Root DID<br/>(Wallet)"]
+    end
+
+    subgraph delegations["Delegations"]
+        D1["Delegation 1<br/>kv/* full access"]
+        D2["Delegation 2<br/>kv/photos/* read-only"]
+    end
+
+    subgraph sessions["Session Keys"]
+        SK1["Session Key<br/>(Desktop App)"]
+        SK2["Session Key<br/>(Mobile App)"]
+    end
+
+    subgraph actions["Actions"]
+        I1["Invocation<br/>PUT /kv/data.json"]
+        I2["Invocation<br/>GET /kv/photos/img.jpg"]
+    end
+
+    RootDID -->|signs| D1
+    RootDID -->|signs| D2
+    D1 -->|grants to| SK1
+    D2 -->|grants to| SK2
+    SK1 -->|uses| I1
+    SK2 -->|uses| I2
+
+    style RootDID fill:#e3f2fd
+    style SK1 fill:#fff3e0
+    style SK2 fill:#fff3e0
+    style I1 fill:#e8f5e9
+    style I2 fill:#e8f5e9

@@ -1,0 +1,18 @@
+%% Simplified Epoch DAG Structure
+%% Use: Main whitepaper - Consistency & Replication section
+
+flowchart LR
+    E0["Epoch 0<br/>(genesis)"]
+    E1["Epoch 1"]
+    E2a["Epoch 2a"]
+    E2b["Epoch 2b"]
+    E3["Epoch 3<br/>(merge)"]
+
+    E0 --> E1
+    E1 --> E2a
+    E1 --> E2b
+    E2a --> E3
+    E2b --> E3
+
+    style E0 fill:#e1f5fe
+    style E3 fill:#e8f5e9

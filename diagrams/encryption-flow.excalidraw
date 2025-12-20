@@ -1,0 +1,16 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "https://excalidraw.com",
+  "elements": [],
+  "appState": {
+    "gridSize": null,
+    "viewBackgroundColor": "#ffffff"
+  },
+  "files": {},
+  "metadata": {
+    "title": "Threshold Decryption and Proxy Re-Encryption Flow",
+    "description": "Conceptual diagram showing: 1) Data owner encrypting data client-side, 2) Encrypted data stored in TinyCloud, 3) Threshold network of nodes (show 3-5 nodes), 4) No single node can decrypt (show crossed-out single node), 5) Threshold cooperation produces decryption (show 3 nodes combining), 6) Optional: Proxy re-encryption path showing re-encryption to another recipient without revealing plaintext",
+    "usage": "Main whitepaper - Section 4: Services (Encryption subsection)"
+  }
+}

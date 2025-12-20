@@ -1,0 +1,27 @@
+%% Detailed Capability Validation Flowchart
+%% Use: Technical Appendix D
+
+flowchart TD
+    Start["1. Parse capabilities from event"] --> ForEach["2. For each capability"]
+    ForEach --> A{"a. Is delegator the<br/>namespace controller?"}
+    A -->|YES| Accept1["Accept<br/>(root authority)"]
+    A -->|NO| B{"b. Parent delegations<br/>in proof chain?"}
+    B -->|NO| Reject1["Reject<br/>(no justification)"]
+    B -->|YES| C{"c. Parents provide broader<br/>or equal capabilities?"}
+    C -->|NO| Reject2["Reject<br/>(capability escalation)"]
+    C -->|YES| D{"d. Time bounds satisfied?<br/>(nbf ≤ now ≤ exp)"}
+    D -->|NO| Reject3["Reject<br/>(outside valid time)"]
+    D -->|YES| Accept2["Accept"]
+
+    Accept1 --> Step3["3. Verify cryptographic signatures"]
+    Accept2 --> Step3
+    Step3 --> Step4["4. Check for revocations in proof chain"]
+    Step4 --> Final{"All checks passed?"}
+    Final -->|YES| Valid["Event Valid"]
+    Final -->|NO| Invalid["Event Rejected"]
+
+    style Valid fill:#c8e6c9
+    style Invalid fill:#ffcdd2
+    style Reject1 fill:#ffcdd2
+    style Reject2 fill:#ffcdd2
+    style Reject3 fill:#ffcdd2

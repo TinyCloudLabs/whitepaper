@@ -1,0 +1,16 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "https://excalidraw.com",
+  "elements": [],
+  "appState": {
+    "gridSize": null,
+    "viewBackgroundColor": "#ffffff"
+  },
+  "files": {},
+  "metadata": {
+    "title": "TinyCloud Autonomic Namespace Overview",
+    "description": "Conceptual diagram showing: 1) A TinyCloud namespace as a self-contained unit, 2) The relationship between DID and namespace URI, 3) How resources are organized under the namespace (services, paths), 4) Visual representation of 'autonomic' - the URI contains its own authority information",
+    "usage": "Main whitepaper - Section 2: The Autonomic Namespace"
+  }
+}

@@ -1,0 +1,24 @@
+%% Session Key Delegation Sequence
+%% Use: Main whitepaper - Authorization Model section
+
+sequenceDiagram
+    participant Wallet as Root Wallet (DID)
+    participant Session as Session Key
+    participant Node as TinyCloud Node
+    participant Store as KV Store
+
+    Note over Wallet: User connects wallet
+
+    Wallet->>Session: Sign delegation<br/>(kv/get, kv/put, kv/del)
+
+    Note over Session: Session key now authorized
+
+    Session->>Node: PUT /kv/photos/img.jpg<br/>+ Authorization (CACAO)
+
+    Node->>Node: Validate delegation chain
+
+    Node->>Store: Store value + Create epoch
+
+    Node-->>Session: 200 OK
+
+    Note over Session: All subsequent<br/>requests use session key

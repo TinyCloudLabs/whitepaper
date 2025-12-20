@@ -1,0 +1,40 @@
+%% Detailed KV Store Write Process
+%% Use: Technical Appendix D
+
+sequenceDiagram
+    participant Client
+    participant API as HTTP API
+    participant Auth as Auth Validator
+    participant Store as Content Store
+    participant Epoch as Epoch Manager
+    participant Peers as Peer Network
+
+    Client->>API: PUT /kv/{path}<br/>Headers: Authorization<br/>Body: {content}
+
+    API->>Store: Stage content bytes
+    Store-->>API: content_cid
+
+    API->>Auth: Validate authorization<br/>(token, content_cid)
+
+    Note over Auth: 1. Parse CACAO/UCAN<br/>2. Extract capabilities<br/>3. Check delegation chain<br/>4. Verify signatures<br/>5. Check time bounds<br/>6. Check revocations
+
+    alt Authorization VALID
+        Auth-->>API: Valid (invoker, capabilities)
+
+        API->>Store: Commit content
+
+        API->>Epoch: Create write event<br/>(invocation + kv_write)
+
+        Epoch->>Epoch: Create new epoch<br/>Link to parent(s)
+
+        Epoch->>Peers: Broadcast epoch
+
+        Epoch-->>API: epoch_cid, version
+
+        API-->>Client: 200 OK<br/>{cid, version, metadata}
+
+    else Authorization INVALID
+        Auth-->>API: Invalid (reason)
+        API->>Store: Discard staged content
+        API-->>Client: 403 Forbidden<br/>{error: reason}
+    end

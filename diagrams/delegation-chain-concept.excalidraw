@@ -1,0 +1,16 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "https://excalidraw.com",
+  "elements": [],
+  "appState": {
+    "gridSize": null,
+    "viewBackgroundColor": "#ffffff"
+  },
+  "files": {},
+  "metadata": {
+    "title": "Authority Flow and Delegation Chain",
+    "description": "Conceptual diagram showing: 1) Root DID (wallet) at top with full authority, 2) Arrows flowing down to session keys with attenuated permissions, 3) Visual indication of attenuation (narrowing capabilities), 4) Simple icons for wallet, browser/app, and resources, 5) Show time bounds and path restrictions as labels",
+    "usage": "Main whitepaper - Section 3: Authorization Model"
+  }
+}
