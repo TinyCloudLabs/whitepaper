@@ -24,15 +24,38 @@ For technical specifications, see the [Technical Appendix](./appendix.md).
 
 ## Abstract
 
-TinyCloud is a protocol for creating user-controlled data namespaces where individuals retain complete sovereignty over their information. A TinyCloud namespace is *autonomic*—its URI encodes how it is controlled, enabling any participant to verify authorization without external registries. Users delegate capabilities (read, write, compute, decrypt) to applications and devices using cryptographically signed tokens. These authorization events form a hash-linked graph that replicates across trusted nodes, providing eventual consistency without centralized coordination. The result is portable, self-sovereign data that users control through explicit delegation rather than platform terms of service.
+TinyCloud is a protocol for creating user-controlled data namespaces where individuals retain complete sovereignty over their information. Users can structure their data for AI and applications—making it legible and useful—while preserving the information asymmetry that protects its value. A TinyCloud namespace is *autonomic*—its URI encodes how it is controlled, enabling any participant to verify authorization without external registries. Users delegate capabilities (read, write, compute, decrypt) to applications and devices using cryptographically signed tokens. These authorization events form a hash-linked graph that replicates across trusted nodes, providing eventual consistency without centralized coordination. The result is portable, self-sovereign data that users control through explicit delegation rather than platform terms of service.
 
 ---
 
 ## 1. Introduction
 
-As software development costs decrease, competitive advantages shift toward data ownership. Traditional cloud architectures require users to cede control of their data to third parties, creating privacy concerns and vendor lock-in.
+As software development costs decrease, competitive advantages shift toward data ownership. AI tools now require structured, accessible data to function—you cannot ask an AI "what did I say yesterday?" without transcripts. This creates pressure to make personal and organizational data *legible*: structured, searchable, and machine-readable.
 
-TinyCloud addresses this by providing:
+But information asymmetry is what preserves value. Coca-Cola's formula matters because the drink is good; a private key matters because the bitcoin it secures is worth something. Asymmetry protects what's already valuable. Traditional cloud architectures force a choice: make your data legible for AI and applications, or keep it private. Structuring data for utility typically means exposing it to platform operators, and the value leaks to whoever controls the infrastructure.
+
+TinyCloud resolves this tension.
+
+### The Legibility-Asymmetry Challenge
+
+The core problem is that legibility and asymmetry appear to be in opposition:
+
+- **Value exists first**: Data, knowledge, and assets have intrinsic worth—proprietary insights, personal records, creative work
+- **Asymmetry preserves value**: Information asymmetry protects what's already valuable by controlling who can access it
+- **Legibility creates new utility**: Making data structured enables AI and applications to operate on it, unlocking capabilities that weren't previously possible
+- **The traditional trade-off**: Conventional systems require choosing between utility (legibility) and protection (asymmetry). If data is structured for AI, it becomes exposed
+
+### How TinyCloud Resolves This
+
+TinyCloud enables users to have both:
+
+- **Full legibility**: Structure and capture everything—conversations, documents, metrics—for your own AI and application use
+- **Preserved asymmetry**: Capability-based delegation means you control exactly who can access what, and under what conditions
+- **Individual value capture**: The utility created by adding legibility while preserving asymmetry flows to the user, not the platform
+
+Unlike traditional cloud architectures, legibility benefits you without benefiting adversaries or intermediaries.
+
+TinyCloud provides:
 
 - **Sovereignty**: Users maintain complete control and explicitly permission all access
 - **Privacy**: Fine-grained permissions minimize data exposure
