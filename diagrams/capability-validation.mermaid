@@ -3,7 +3,7 @@
 
 flowchart TD
     Start["1. Parse capabilities from event"] --> ForEach["2. For each capability"]
-    ForEach --> A{"a. Is delegator the<br/>namespace controller?"}
+    ForEach --> A{"a. Is delegator the<br/>space controller?"}
     A -->|YES| Accept1["Accept<br/>(root authority)"]
     A -->|NO| B{"b. Parent delegations<br/>in proof chain?"}
     B -->|NO| Reject1["Reject<br/>(no justification)"]

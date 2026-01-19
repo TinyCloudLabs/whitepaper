@@ -1,8 +1,8 @@
-# TinyCloud Protocol: A Self-Sovereign Autonomic Namespace for Decentralized Data Control
+# Signatures Are All You Need: Cryptographic Access Control for AI and Applications
 
 **Version 1.0**
 
-**Authors:** Charles Cunningham, Sam Gbafa
+**Authors:** Sam Gbafa, Charles Cunningham
 
 ---
 
@@ -10,7 +10,7 @@
 
 1. [Abstract](#abstract)
 2. [Introduction](#1-introduction)
-3. [The Autonomic Namespace](#2-the-autonomic-namespace)
+3. [The Autonomic Space](#2-the-autonomic-space)
 4. [Authorization Model](#3-authorization-model)
 5. [Services](#4-services)
 6. [Consistency & Replication](#5-consistency--replication)
@@ -24,7 +24,13 @@ For technical specifications, see the [Technical Appendix](./appendix.md).
 
 ## Abstract
 
-TinyCloud is a protocol for creating user-controlled data namespaces where individuals retain complete sovereignty over their information. Users can structure their data for AI and applications—making it legible and useful—while preserving the information asymmetry that protects its value. A TinyCloud namespace is *autonomic*—its URI encodes how it is controlled, enabling any participant to verify authorization without external registries. Users delegate capabilities (read, write, compute, decrypt) to applications and devices using cryptographically signed tokens. These authorization events form a hash-linked graph that replicates across trusted nodes, providing eventual consistency without centralized coordination. The result is portable, self-sovereign data that users control through explicit delegation rather than platform terms of service.
+Bitcoin let people hold and transfer value without banks. TinyCloud lets people hold and share data without platforms. Both rely on the same primitive: cryptographic signatures. Show up anywhere with your key. One signature proves ownership and unlocks access.
+
+TinyCloud is a protocol for creating *spaces*—user-controlled data containers where individuals retain complete sovereignty over their information. Users delegate capabilities (read, write, compute, decrypt) to applications, devices, and AI agents using cryptographically signed tokens. Each delegation is self-verifying: the signature chain proves authorization without consulting external registries.
+
+In an era of synthetic content and cloneable voices, cryptographic verifiability matters end-to-end. When AI systems operate on your data, you need proof of who authorized what. TinyCloud provides that signal—every access request carries a verifiable chain of signatures back to the data owner.
+
+These authorization events form a hash-linked graph that replicates across trusted nodes, providing eventual consistency without centralized coordination. The result: portable, self-sovereign data that you control through explicit delegation rather than platform terms of service.
 
 ---
 
@@ -63,36 +69,46 @@ TinyCloud provides:
 
 ### Design Principles
 
-- **All authority flows from the namespace controller**: The DID controls everything within the namespace
+- **All authority flows from the space controller**: The DID controls everything within the space
 - **Explicit trust, not trustlessness**: Users authorize only computers they trust
 - **Minimal trust requirements**: Delegated capabilities follow the principle of least authority
 - **Eventual consistency**: Availability over strong consistency, with deterministic conflict resolution
 
+### Why Now: Verifiability in the AI Era
+
+As AI systems become more capable, two realities converge:
+
+**AI needs access to your data.** Personal assistants, agents, and automated workflows require permission to read, write, and act on your behalf. Without a permission system, you either grant blanket access or get no utility.
+
+**Synthetic content makes authenticity hard.** When voices can be cloned and text generated at scale, how do you know a request is genuine? The answer is signatures—cryptographic proof that a specific key authorized a specific action.
+
+TinyCloud addresses both: it provides the permission infrastructure AI systems need to operate, while ensuring every access request carries verifiable proof of authorization. In a world of synthetic noise, cryptographic signatures are the signal.
+
 ---
 
-## 2. The Autonomic Namespace
+## 2. The Autonomic Space
 
-A TinyCloud namespace is *autonomic*—it describes how it is controlled within its own identifier. Any resource identified by a TinyCloud URI can be verified without consulting external authorities.
+A TinyCloud space is *autonomic*—it describes how it is controlled within its own identifier. Any resource identified by a TinyCloud URI can be verified without consulting external authorities.
 
 ### URI Structure
 
 ```
 tinycloud:pkh:eip155:1:0x6a12...C04B:default/kv/photos/vacation.jpg
-└────────┘└───────────────────────────┘└─────┘└──┘└───────────────┘
-  scheme          DID suffix         namespace service    path
+└────────┘└─────────────────────────┘└─────┘└──┘└─────────────────┘
+  scheme          DID suffix          space  service    path
 ```
 
 | Component | Description |
 |-----------|-------------|
 | `tinycloud:` | Protocol identifier |
 | DID suffix | The controlling identity (derived from a DID) |
-| Namespace | User-defined subdivision (e.g., "default", "work") |
+| Space | User-defined subdivision (e.g., "default", "work") |
 | Service | The service type (e.g., "kv", "compute", "capabilities") |
 | Path | Resource path within the service |
 
 ### Relationship to DIDs
 
-The TinyCloud URI maintains a bijective relationship with Decentralized Identifiers (DIDs). To construct a TinyCloud URI: take a DID, replace `did:` with `tinycloud:`, and append the namespace and path. This ensures all resources are automatically protected by the DID's authorization chain.
+The TinyCloud URI maintains a bijective relationship with Decentralized Identifiers (DIDs). To construct a TinyCloud URI: take a DID, replace `did:` with `tinycloud:`, and append the space and path. This ensures all resources are automatically protected by the DID's authorization chain.
 
 ---
 
@@ -117,7 +133,7 @@ TinyCloud uses capability-based access control through three types of cryptograp
 └─────────────────┘                    └─────────────────┘                  └─────────────────┘
 ```
 
-The namespace controller (root DID) has absolute authority. They delegate capabilities to session keys, applications, or other users. Each delegation can be *attenuated*—granting narrower permissions than held. Delegations can include time bounds (expiry, not-before) and path restrictions.
+The space controller (root DID) has absolute authority. They delegate capabilities to session keys, applications, or other users. Each delegation can be *attenuated*—granting narrower permissions than held. Delegations can include time bounds (expiry, not-before) and path restrictions.
 
 ### Session Keys
 
@@ -131,7 +147,7 @@ Capabilities can be delegated to a policy engine that grants conditional access.
 
 ## 4. Services
 
-TinyCloud provides services through the URI path structure. Each service defines its own capabilities and semantics.
+TinyCloud provides services through the URI path structure. Each service defines its own capabilities and semantics within a space.
 
 ### Key-Value Store (`kv`)
 
@@ -148,7 +164,7 @@ Every write creates a new version. Previous versions remain accessible. Conflict
 
 ### Compute (`compute`)
 
-Execute functions on data within the namespace:
+Execute functions on data within the space:
 
 | Ability | Description |
 |---------|-------------|
@@ -163,7 +179,7 @@ Threshold decryption and proxy re-encryption for data sharing:
 
 | Ability | Description |
 |---------|-------------|
-| `tinycloud.encryption/encrypt` | Encrypt data to the namespace |
+| `tinycloud.encryption/encrypt` | Encrypt data to the space |
 | `tinycloud.encryption/decrypt` | Request decryption (via threshold network) |
 | `tinycloud.encryption/reencrypt` | Proxy re-encrypt to another recipient |
 
@@ -181,7 +197,7 @@ Relational database storage using SQLite:
 | `tinycloud.sql/select` | SELECT with table/column restrictions |
 | `tinycloud.sql/execute` | Execute specific prepared statements |
 
-SQLite databases are stored as files within the namespace at `sql/<database-name>`. Permissions can be scoped hierarchically:
+SQLite databases are stored as files within the space at `sql/<database-name>`. Permissions can be scoped hierarchically:
 
 - **Database level**: Full read/write/admin access to the entire database
 - **Table level**: Access to specific tables and columns via caveats
@@ -190,7 +206,7 @@ SQLite databases are stored as files within the namespace at `sql/<database-name
 ```
 tinycloud:pkh:eip155:1:0x6a12...C04B:default/sql/myapp.db
 └────────────────────────────────────────────┘└──┘└────────┘
-              namespace                       service  database
+                  space                       service  database
 ```
 
 This enables applications to use SQL for relational data while maintaining TinyCloud's capability-based authorization. Applications can choose KV for blob storage or SQL for structured queries—both with the same authorization model.
@@ -227,7 +243,7 @@ Each epoch has a sequence number and parent references. When forks occur (concur
 Hosts discover each other through:
 - **Host delegations**: Including multi-addresses in the delegation
 - **DID documents**: Service endpoints advertising node locations
-- **Manifest service**: A registry mapping namespaces to hosts
+- **Manifest service**: A registry mapping spaces to hosts
 
 When events occur, hosts broadcast epochs to peers. Peers validate the epoch chain and apply events. Missing history is requested and validated bottom-up from genesis.
 
@@ -249,7 +265,7 @@ Current ZK VMs achieve near-real-time proving for complex workloads—Ethereum b
 
 ZK proofs can extend beyond compute to authorization itself:
 
-- **Delegation Validation Proof**: Prove that a delegation was correctly validated against namespace policy
+- **Delegation Validation Proof**: Prove that a delegation was correctly validated against space policy
 - **Epoch Transition Proof**: Prove that epoch N+1 correctly follows from epoch N
 - **State Root Proof**: Prove current state root derives from genesis through valid transitions
 
@@ -289,7 +305,23 @@ Following the Principle of Least Authority (POLA):
 
 ### Key Management
 
-The security of a TinyCloud namespace depends on protecting the controller's private key. Consider hardware security modules, threshold signatures for high-value namespaces, and proper key rotation procedures.
+The security of a TinyCloud space depends on protecting the controller's private key. Consider hardware security modules, threshold signatures for high-value spaces, and proper key rotation procedures.
+
+### Trusted Execution Environments
+
+The security model above ensures **integrity**—hosts cannot forge delegations or modify data undetectably. However, without additional measures, a host could observe plaintext data during processing.
+
+For hosted TinyCloud nodes, **Trusted Execution Environments (TEEs)** provide confidentiality guarantees:
+
+- Data remains encrypted in memory during processing
+- Node operators cannot access plaintext, even with physical access
+- Remote attestation allows users to verify the execution environment before delegating
+
+This extends trust from the user's private key to the compute environment. Users self-hosting TinyCloud control their own hardware; users delegating to hosted nodes rely on TEE attestation to ensure their data remains confidential.
+
+TinyCloud nodes are currently deployed using DStack on Phala Network, which provides TEE-based confidential computing. The protocol is designed to be TEE-agnostic, supporting any environment that provides attestation and memory encryption (e.g., Intel SGX, Intel TDX, AMD SEV).
+
+Alternative approaches like threshold encryption and homomorphic encryption offer different tradeoffs. TEEs provide practical confidential compute for real workloads today, while these cryptographic approaches may become viable as performance improves.
 
 ---
 
@@ -297,7 +329,7 @@ The security of a TinyCloud namespace depends on protecting the controller's pri
 
 TinyCloud provides self-sovereign data control through:
 
-- **Autonomic namespaces** that encode their own authorization semantics
+- **Autonomic spaces** that encode their own authorization semantics
 - **Capability-based security** with delegable, attenuable permissions
 - **Epoch-based consistency** through hash-linked DAGs
 - **Extensible services** for storage, compute, and encryption
@@ -310,7 +342,7 @@ The protocol demonstrates that user sovereignty over data is achievable without 
 
 ## Technical Appendix
 
-For detailed specifications including IPLD schemas, ABNF grammars, and protocol diagrams, see the [Technical Appendix](./appendix.md).
+For detailed specifications including IPLD schemas, ABNF grammars, and protocol diagrams, see the [Technical Appendix](./appendix/README.md).
 
 ---
 

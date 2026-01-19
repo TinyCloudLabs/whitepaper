@@ -9,7 +9,7 @@ Hand-drawn style diagrams for conceptual explanations in the main whitepaper.
 
 | File | Section | Description |
 |------|---------|-------------|
-| `namespace-overview.excalidraw` | 2. Autonomic Namespace | TinyCloud namespace as self-contained unit |
+| `space-overview.excalidraw` | 2. Autonomic Space | TinyCloud space as self-contained unit |
 | `delegation-chain-concept.excalidraw` | 3. Authorization Model | Authority flow from root DID to session keys |
 | `services-overview.excalidraw` | 4. Services | KV, Compute, Encryption services overview |
 | `encryption-flow.excalidraw` | 4. Services | Threshold decryption and PRE flow |
@@ -53,7 +53,7 @@ Or referenced as external files (requires renderer support):
 1. Opened in [Excalidraw](https://excalidraw.com)
 2. Filled in with actual content based on the metadata description
 3. Exported as PNG/SVG
-4. Referenced in markdown: `![Namespace Overview](./diagrams/namespace-overview.png)`
+4. Referenced in markdown: `![Space Overview](./diagrams/space-overview.png)`
 
 ## Editing Excalidraw Files
 

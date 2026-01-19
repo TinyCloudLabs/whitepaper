@@ -10,7 +10,7 @@
   "files": {},
   "metadata": {
     "title": "TinyCloud Services Overview",
-    "description": "Conceptual diagram showing: 1) Three main services side by side: KV Store, Compute, Encryption, 2) KV Store: simple file/folder icon with CRUD operations, 3) Compute: gear/function icon with WASM/ZK VM, 4) Encryption: lock/key icon with threshold decryption, 5) All connected to a central TinyCloud namespace, 6) Show extensibility pattern at bottom",
+    "description": "Conceptual diagram showing: 1) Three main services side by side: KV Store, Compute, Encryption, 2) KV Store: simple file/folder icon with CRUD operations, 3) Compute: gear/function icon with WASM/ZK VM, 4) Encryption: lock/key icon with threshold decryption, 5) All connected to a central TinyCloud space, 6) Show extensibility pattern at bottom",
     "usage": "Main whitepaper - Section 4: Services"
   }
 }
