@@ -18,7 +18,7 @@
 8. [Security Considerations](#7-security-considerations)
 9. [Conclusion](#8-conclusion)
 
-For technical specifications, see the [Technical Appendix](./appendix.md).
+For technical specifications, see the [Technical Appendix](./appendix/README.md).
 
 ---
 
