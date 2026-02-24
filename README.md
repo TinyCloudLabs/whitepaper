@@ -319,7 +319,7 @@ For hosted TinyCloud nodes, **Trusted Execution Environments (TEEs)** provide co
 
 This extends trust from the user's private key to the compute environment. Users self-hosting TinyCloud control their own hardware; users delegating to hosted nodes rely on TEE attestation to ensure their data remains confidential.
 
-TinyCloud nodes are currently deployed using DStack on Phala Network, which provides TEE-based confidential computing. The protocol is designed to be TEE-agnostic, supporting any environment that provides attestation and memory encryption (e.g., Intel SGX, Intel TDX, AMD SEV).
+The protocol is designed to be TEE-agnostic, supporting any environment that provides attestation and memory encryption (e.g., Intel SGX, Intel TDX, AMD SEV). TinyCloud nodes are currently deployed using DStack, which provides TEE-based confidential computing.
 
 Alternative approaches like threshold encryption and homomorphic encryption offer different tradeoffs. TEEs provide practical confidential compute for real workloads today, while these cryptographic approaches may become viable as performance improves.
 

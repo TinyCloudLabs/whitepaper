@@ -34,6 +34,12 @@ Specifies TinyCloud's delegation protocol including UCAN and CACAO formats, dele
 ### [Appendix I: SDK Interface Specification](./appendix-i.md)
 Defines the platform-agnostic SDK interface specification using pseudocode, covering the IUserAuthorization interface, Capability API, Delegation API, Space objects, Session management, Permission prompts, and Invocation chain building with concrete examples.
 
+### [Appendix J: Services Specification](./appendix-j.md)
+Specifies TinyCloud's service model and core services (KV, SQL, Compute, Space, Capabilities), including service URI format, capability structures, caveats, service discovery phases, error responses, and extensibility patterns.
+
+### [Appendix K: Public Spaces](./appendix-k.md)
+Defines the public spaces feature for publishing discoverable data with unauthenticated read access. Covers deterministic space ID construction, the public REST endpoint, `.well-known/` key conventions, discovery protocol, caching and CDN integration, rate limiting, storage quotas, and security considerations.
+
 ---
 
 *This technical appendix accompanies the TinyCloud Protocol Whitepaper. For the conceptual overview, see [whitepaper.md](../whitepaper.md).*
