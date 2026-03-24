@@ -106,6 +106,8 @@ tinycloud:pkh:eip155:1:0x6a12...C04B:default/kv/photos/vacation.jpg
 | Service | The service type (e.g., "kv", "compute", "capabilities") |
 | Path | Resource path within the service |
 
+Conforming SDKs provision a set of **system spaces** on first sign-in — `default`, `public`, `account`, `secrets`, and `apps` — that provide structure for identity, application data, and secrets management. See [Appendix L](./appendix/appendix-l-system-spaces.md) for the full specification.
+
 ### Relationship to DIDs
 
 The TinyCloud URI maintains a bijective relationship with Decentralized Identifiers (DIDs). To construct a TinyCloud URI: take a DID, replace `did:` with `tinycloud:`, and append the space and path. This ensures all resources are automatically protected by the DID's authorization chain.
