@@ -175,15 +175,32 @@ Functions are WebAssembly binaries (or ZK VM programs for verifiable execution).
 
 ### Encryption (`encryption`)
 
-Threshold decryption and proxy re-encryption for data sharing:
+TinyCloud encryption is network-scoped and decrypt-only in v1. Clients encrypt
+inline envelopes locally to the network public key, then ask a node to unwrap
+the encrypted symmetric key and rewrap it for the per-request receiver key.
 
 | Ability | Description |
 |---------|-------------|
-| `tinycloud.encryption/encrypt` | Encrypt data to the space |
-| `tinycloud.encryption/decrypt` | Request decryption (via threshold network) |
-| `tinycloud.encryption/reencrypt` | Proxy re-encrypt to another recipient |
+| `tinycloud.encryption/decrypt` | Decrypt a network-scoped inline envelope through the serving node |
 
-Data is encrypted client-side before storage. TinyCloud nodes participate in threshold decryption—no single node can decrypt unilaterally. Proxy re-encryption enables sharing without exposing plaintext to intermediaries.
+Network ids are `urn:tinycloud:encryption:<principal>:<network>`. The embedded
+principal is the root authority for the network, and the node DB is the
+authoritative source of network state. `.well-known/encryption/network/<name>`
+records are discovery/cache only, and one network can serve multiple spaces
+owned by the same principal.
+
+This is a hard break from the old `encrypt` / `reencrypt` / grant-passing
+model: v1 has no node-side encrypt API, no envelope CRUD endpoint, and no
+proxy re-encryption path. The inline envelope shape is versioned so vault,
+secrets, and SQL records can carry `networkId`, `alg`, `keyVersion`,
+`encryptedSymmetricKey`, `encryptedSymmetricKeyHash`, `ciphertext`, `aad`, and
+`metadata` together.
+
+One-of-one v1 is trusted-node decrypt-only (`n=1, t=1`). The node never
+receives or sends payload plaintext; it only handles the network key unwrap and
+receiver-key rewrap path. Threshold-ready fields stay in the descriptor so
+future threshold mode can return signed fragments or shares for client-side
+assembly without changing the network identity scheme.
 
 ### SQL Database (`sql`)
 
