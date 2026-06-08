@@ -8,14 +8,15 @@
 | **Caveat** | A constraint that limits how a capability may be used (e.g., time bounds, path restrictions) |
 | **CID** | Content Identifier—a self-describing hash used to reference content-addressed data |
 | **DAG** | Directed Acyclic Graph—the data structure used for epochs and authorization state |
-| **Delegation** | An authorization event that grants capabilities from one principal to another |
+| **Delegate** | A key, application, service, device, agent, or session key that receives scoped authority from an owner |
+| **Delegation** | An authorization event that grants capabilities from a delegator to a delegatee |
 | **DID** | Decentralized Identifier—a globally unique identifier not requiring centralized registration |
 | **Epoch** | A signed container of events that establishes ordering in the TinyCloud DAG |
 | **Host** | A TinyCloud node authorized to receive events, create epochs, and replicate with peers |
 | **Invocation** | An authorization event that exercises a capability to perform an action |
 | **IPLD** | InterPlanetary Linked Data—a data model for content-addressed linked data structures |
 | **LWW CRDT** | Last-Write-Wins Conflict-free Replicated Data Type—the consistency model for the KV store |
-| **Space Controller** | The DID that has root authority over a TinyCloud space |
+| **Owner** | The top authority for a TinyCloud space, encryption network, or other TinyCloud-controlled resource |
 | **POLA** | Principle of Least Authority—granting only the minimum capabilities needed |
 | **Revocation** | An authorization event that invalidates a delegation |
 | **Session Key** | An ephemeral key pair delegated capabilities for a specific session or device |
