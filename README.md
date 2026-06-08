@@ -26,7 +26,7 @@ For technical specifications, see the [Technical Appendix](./appendix/README.md)
 
 Bitcoin let people hold and transfer value without banks. TinyCloud lets people hold and share data without platforms. Both rely on the same primitive: cryptographic signatures. Show up anywhere with your key. One signature proves ownership and unlocks access.
 
-TinyCloud is a protocol for creating *spaces*—user-controlled data containers where individuals retain complete sovereignty over their information. Users delegate capabilities (read, write, compute, decrypt) to applications, devices, and AI agents using cryptographically signed tokens. Each delegation is self-verifying: the signature chain proves authorization without consulting external registries.
+TinyCloud is a protocol for user-owned data and capability-based access control. Owners keep authority over their spaces and encryption networks; delegates such as applications, services, devices, AI agents, and session keys receive only the scoped permissions they need. Each delegation is self-verifying: the signature chain proves authorization without consulting external registries.
 
 In an era of synthetic content and cloneable voices, cryptographic verifiability matters end-to-end. When AI systems operate on your data, you need proof of who authorized what. TinyCloud provides that signal—every access request carries a verifiable chain of signatures back to the data owner.
 
@@ -69,7 +69,7 @@ TinyCloud provides:
 
 ### Design Principles
 
-- **All authority flows from the space controller**: The DID controls everything within the space
+- **All authority flows from the owner**: The owner DID controls everything within the space
 - **Explicit trust, not trustlessness**: Users authorize only computers they trust
 - **Minimal trust requirements**: Delegated capabilities follow the principle of least authority
 - **Eventual consistency**: Availability over strong consistency, with deterministic conflict resolution
@@ -114,13 +114,32 @@ The TinyCloud URI maintains a bijective relationship with Decentralized Identifi
 
 ## 3. Authorization Model
 
-TinyCloud uses capability-based access control through three types of cryptographically signed events:
+TinyCloud uses capability-based access control through three types of cryptographically signed events.
+
+### Owner and Delegate Model
+
+TinyCloud authority starts with an owner. The owner is the top authority for a
+space, encryption network, or other TinyCloud-controlled resource.
+
+Owner keys have two required properties: they are self-custodiable, and they can
+update a public registry. TinyCloud uses Ethereum keys for owner keys because
+Ethereum keys satisfy these properties and benefit from extensive prior work in
+wallets, signatures, recovery, and public registry updates.
+
+A delegate is any key, application, service, device, agent, or session key that
+receives scoped authority from an owner. Delegates do not inherit ownership. They
+can only perform actions covered by the capabilities delegated to them.
+
+A delegation is the signed authorization edge from delegator to delegatee. An
+invocation is the signed request that exercises one of those delegated
+capabilities. This gives TinyCloud a simple rule: every operation must carry a
+verifiable signature chain back to the owner.
 
 ### Event Types
 
 | Event | Purpose |
 |-------|---------|
-| **Delegation** | Grants capabilities from one principal to another |
+| **Delegation** | Grants capabilities from a delegator to a delegatee |
 | **Invocation** | Exercises a capability to perform an action |
 | **Revocation** | Invalidates a delegation and all derived capabilities |
 
@@ -128,16 +147,19 @@ TinyCloud uses capability-based access control through three types of cryptograp
 
 ```
 ┌─────────────────┐      delegate      ┌─────────────────┐      invoke      ┌─────────────────┐
-│  Root DID       │ ─────────────────► │  Session Key    │ ───────────────► │  Resource       │
-│  (Wallet)       │                    │  (Browser)      │                  │  (KV Store)     │
+│  Owner DID      │ ─────────────────► │  Session Key    │ ───────────────► │  Resource       │
+│  (Wallet)       │                    │  (Delegate)     │                  │  (KV Store)     │
 └─────────────────┘                    └─────────────────┘                  └─────────────────┘
 ```
 
-The space controller (root DID) has absolute authority. They delegate capabilities to session keys, applications, or other users. Each delegation can be *attenuated*—granting narrower permissions than held. Delegations can include time bounds (expiry, not-before) and path restrictions.
+The owner has top authority. They delegate capabilities to session keys,
+applications, or other users. Each delegation can be *attenuated*—granting
+narrower permissions than held. Delegations can include time bounds (expiry,
+not-before) and path restrictions.
 
 ### Session Keys
 
-A common pattern is delegating to an ephemeral "session key" generated for a specific session or device. The root wallet signs once to authorize the session key, which then handles all subsequent operations without repeated wallet interactions.
+A common pattern is delegating to an ephemeral "session key" generated for a specific session or device. The owner wallet signs once to authorize the session key, which then handles all subsequent operations without repeated wallet interactions.
 
 ### Policy Engine
 
@@ -175,15 +197,32 @@ Functions are WebAssembly binaries (or ZK VM programs for verifiable execution).
 
 ### Encryption (`encryption`)
 
-Threshold decryption and proxy re-encryption for data sharing:
+TinyCloud encryption is network-scoped and decrypt-only in v1. Clients encrypt
+inline envelopes locally to the network public key, then ask a node to unwrap
+the encrypted symmetric key and rewrap it for the per-request receiver key.
 
 | Ability | Description |
 |---------|-------------|
-| `tinycloud.encryption/encrypt` | Encrypt data to the space |
-| `tinycloud.encryption/decrypt` | Request decryption (via threshold network) |
-| `tinycloud.encryption/reencrypt` | Proxy re-encrypt to another recipient |
+| `tinycloud.encryption/decrypt` | Decrypt a network-scoped inline envelope through the serving node |
 
-Data is encrypted client-side before storage. TinyCloud nodes participate in threshold decryption—no single node can decrypt unilaterally. Proxy re-encryption enables sharing without exposing plaintext to intermediaries.
+Network ids are `urn:tinycloud:encryption:<ownerDid>:<network>`. The embedded
+owner DID is the root authority for the network, and the node DB is the
+authoritative source of network state. `.well-known/encryption/network/<name>`
+records are discovery/cache only, and one network can serve multiple spaces
+owned by the same owner.
+
+This is a hard break from the old `encrypt` / `reencrypt` / grant-passing
+model: v1 has no node-side encrypt API, no envelope CRUD endpoint, and no
+proxy re-encryption path. The inline envelope shape is versioned so vault,
+secrets, and SQL records can carry `networkId`, `alg`, `keyVersion`,
+`encryptedSymmetricKey`, `encryptedSymmetricKeyHash`, `ciphertext`, `aad`, and
+`metadata` together.
+
+One-of-one v1 is trusted-node decrypt-only (`n=1, t=1`). The node never
+receives or sends payload plaintext; it only handles the network key unwrap and
+receiver-key rewrap path. Threshold-ready fields stay in the descriptor so
+future threshold mode can return signed fragments or shares for client-side
+assembly without changing the network identity scheme.
 
 ### SQL Database (`sql`)
 
