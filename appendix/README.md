@@ -40,6 +40,9 @@ Specifies TinyCloud's service model and core services (KV, SQL, Compute, Space, 
 ### [Appendix K: Public Spaces](./appendix-k.md)
 Defines the public spaces feature for publishing discoverable data with unauthenticated read access. Covers deterministic space ID construction, the public REST endpoint, `.well-known/` key conventions, discovery protocol, caching and CDN integration, rate limiting, storage quotas, and security considerations.
 
+### [Appendix L: System Spaces](./appendix-l-system-spaces.md)
+Defines the system spaces convention — well-known spaces (default, public, account, secrets, apps) provisioned on first sign-in. Covers the provisioning flow, account space metadata schema (space index, app registry, preferences), secrets space isolation, application path-scoping model, app manifests, and OpenKey integration.
+
 ---
 
 *This technical appendix accompanies the TinyCloud Protocol Whitepaper. For the conceptual overview, see [whitepaper.md](../whitepaper.md).*
