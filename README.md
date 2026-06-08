@@ -28,7 +28,7 @@ Bitcoin let people hold and transfer value without banks. TinyCloud lets people 
 
 TinyCloud is a protocol for creating *spaces*—user-controlled data containers where individuals retain complete sovereignty over their information. Every space has an owner, whose key is the top authority for that space and for any encryption networks attached to it. Owners grant scoped, revocable capabilities to delegates such as applications, services, devices, AI agents, and session keys. Each delegation is self-verifying: the signature chain proves authorization back to the owner without consulting external registries.
 
-Owner keys have two required properties: they are self-custodiable and able to update a public registry. TinyCloud uses Ethereum keys because they satisfy both properties and benefit from extensive prior work in wallets, signatures, recovery, and public registry updates.
+Owner keys have two required properties: they are self-custodiable and able to update a public registry. Any key with those properties can serve as an owner key. TinyCloud uses Ethereum keys by default because they satisfy both properties and benefit from extensive prior work in wallets, signatures, recovery, and public registry updates.
 
 In an era of synthetic content and cloneable voices, cryptographic verifiability matters end-to-end. When AI systems operate on your data, you need proof of who authorized what. TinyCloud provides that signal—every access request carries a verifiable chain of signatures back to the data owner.
 
@@ -122,7 +122,7 @@ TinyCloud uses capability-based access control through three types of cryptograp
 
 Every TinyCloud space has an **owner**. The owner is the top authority for that space, for any encryption network attached to it, and for any other TinyCloud-controlled resource scoped to that owner.
 
-Owner keys have two required properties: they are **self-custodiable**, and they can **update a public registry**. TinyCloud uses Ethereum keys for owner keys because they satisfy these properties and benefit from extensive prior work in wallets, signatures, recovery, and public registry updates.
+Owner keys have two required properties: they are **self-custodiable**, and they can **update a public registry**. Any key with those properties can serve as an owner key. TinyCloud uses Ethereum keys by default because they satisfy these properties and benefit from extensive prior work in wallets, signatures, recovery, and public registry updates.
 
 A **delegate** is any key, application, service, device, AI agent, or session key that receives scoped authority from an owner or from another delegate further down the chain. Delegates do not inherit ownership. They can only perform actions covered by the capabilities delegated to them and only within the caveats attached to those capabilities.
 
